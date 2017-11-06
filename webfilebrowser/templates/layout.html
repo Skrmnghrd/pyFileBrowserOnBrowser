@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Database</title>
+    <link href="{{ url_for('static', filename='bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='font-awesome.min.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('static', filename='clean-blog.min.css') }}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Adamina" rel="stylesheet"> 
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"> 
+    
+    
+    <style>
+      html *{
+        font-family: 'Adamina', serif;
+      }
+			#directories ul{
+			list-style: none;
+			}
+			#directories li{
+			display: inline;
+			}
+      #directories button{
+        display: inline;
+        padding-right: 10px;
+        
+      }
+				
+      #files a{
+        display: inline;
+        padding-right: 10px;
+      }
+
+		</style>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    {{ JSGlue.include() }}
+ 
+  </head>
+  <body>
+    {% include 'includes/_navbar.html' %}
+
+
+    
+    {% block body %}{% endblock %}
+
+    {% include 'includes/_footer.html' %}
+    <script href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</html>
