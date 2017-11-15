@@ -1,0 +1,221 @@
+
+{% extends 'layout.html' %}
+
+{%- block body %} 
+<script type=text/javascript>
+			$(function() {
+			  $('a#process_input').bind('click', function() {
+				$.getJSON('{{url_for("_back_")}}', {
+				}, function(data) 
+				{
+					var clear_us = ['directories','files', 'current_dir'];
+					clear_us.map( function(item) 
+					{
+						var clear_me = document.getElementById(item);
+						while (clear_me.firstChild) {
+							clear_me.removeChild(clear_me.firstChild);
+						}
+					});
+					for (var keys in data)
+					{
+          var test = data[keys]
+					document.getElementById("current_dir").innerHTML = test['current_dir'];
+          test['dirs_in_cwd'].map( function(item)
+						{
+            var btn = document.createElement("BUTTON");
+            var textnode = document.createTextNode(item);
+            btn.appendChild(textnode);
+						btn.value = item;
+						btn.onclick = function(){ButtonDirChange(this)};
+            document.getElementById("directories").appendChild(btn);
+         		});
+					test['files_in_cwd'].map( function(item)
+						{
+            var node_files = document.createElement('a');
+            var textnode = document.createTextNode(item);
+            node_files.appendChild(textnode);
+						node_files.title = item;
+						node_files.href = Flask.url_for("_get_file", {"file_name": item})
+            document.getElementById("files").appendChild(node_files);
+          	});
+						};
+				});
+				return false;
+			  });
+			});
+			//end of _back
+      $.getJSON('_first_open', function(data){
+        for (var keys in data){
+          var test = data[keys]
+          document.getElementById("current_dir").innerHTML = test['current_dir'];
+          test['dirs_in_cwd'].map( function(item){
+            var btn = document.createElement("BUTTON");
+            var textnode = document.createTextNode(item);
+            btn.appendChild(textnode);
+						btn.value = item;
+						btn.onclick = function(){ButtonDirChange(this)};
+            document.getElementById("directories").appendChild(btn);
+          });
+          test['files_in_cwd'].map( function(item){
+            var node_files = document.createElement('a');
+            var textnode = document.createTextNode(item);
+						node_files.appendChild(textnode);
+						node_files.title = item;
+						node_files.href = Flask.url_for("_get_file", {"file_name": item});
+            document.getElementById("files").appendChild(node_files);
+          });
+        };
+      });
+			function ButtonDirChange(elem)
+			{
+				$.getJSON('{{url_for("_change_dir")}}',
+				{
+					directory: elem.value
+				}, function(data){
+					
+					var clear_us = ['directories','files', 'current_dir'];
+					clear_us.map( function(item) 
+					{
+						var clear_me = document.getElementById(item);
+						while (clear_me.firstChild) 
+						{
+							clear_me.removeChild(clear_me.firstChild);
+						}
+					});
+					for (var keys in data)
+					{
+          var test = data[keys]
+					
+					document.getElementById("current_dir").innerHTML = test['current_dir'];
+          test['dirs_in_cwd'].map( function(item)
+						{
+            var btn = document.createElement("BUTTON");
+            var textnode = document.createTextNode(item);
+            btn.appendChild(textnode);
+						btn.value = item;
+						btn.onclick = function(){ButtonDirChange(this)};
+            document.getElementById("directories").appendChild(btn);
+         		});
+				
+					test['files_in_cwd'].map( function(item)
+						{
+            var node_files = document.createElement('a');
+            var textnode = document.createTextNode(item);
+            node_files.appendChild(textnode);
+						node_files.title = item;
+						node_files.class = "btn btn-default";
+						node_files.href = Flask.url_for("_get_file", {"file_name": item});
+						node_files.onclick = function(){DownloadThis(this)};
+            document.getElementById("files").appendChild(node_files);
+          	});
+						};
+				});
+			};
+			//end of button change dir
+			$(document).ready(function(){
+						$( "#upload_button").click(function() {
+							$( "#input_upload").toggle(100);
+								$("#file_input").val("");
+								updateList() // TO MAKE IT EMPTY
+						});
+
+					});
+
+			$(document).ready(function(){
+						$( "#hide_files").click(function() {
+							$( "#files").toggle(1000);
+						
+						});
+
+					});
+		updateList = function() {
+				var input = document.getElementById('file_input');
+				var output = document.getElementById('fileList');
+
+				output.innerHTML = '<ul>';
+				for (var i = 0; i < input.files.length; ++i) {
+					output.innerHTML += '<p>' + input.files.item(i).name + '</p>';
+				}
+			output.innerHTML += '</ul>';
+		}
+		//end of input file
+		function UploadFiles(elem)
+			{
+				console.log('Stack Passed Here!');
+				$.getJSON('{{url_for("_upload")}}',
+				{
+					directory: elem.value
+				}, function(data){
+					//please insert data files here for uploads :)
+				});
+			};
+			//new upload
+</script>
+		<div class='container'>
+				<center>
+		 <h3> Current Directory: </h3>
+			<p id=current_dir> </p>
+			<hr>
+					<a id=upload_button href=# >Click to Upload: </a>
+
+					<div id="input_upload" style="display: none;" >
+
+
+
+						<form name="addForm" id="addForm" method="POST" action="" novalidate enctype="multipart/form-data">
+					<!--
+					<input type="file" id="file_input" name="file_upload_name" multiple  onchange="javascript:updateList()"
+			/>
+							<div class="container">
+						<div id="fileList"></div>
+						</div>
+
+					-->
+
+					<input id="file-picker" type="file" name="file" accept="any" multiple><p>
+					<div id="dropbox">
+							Drag and Drop Files Here
+					</div><p>
+
+						<input type="submit" value="Upload!" id="upload-button">
+						
+					<fieldset id="progress" style="display: none">
+						<legend>Files Progress</legend>
+						<div class="progress-trough">
+								<div id="progress-bar" class="progress-bar">0%</div>
+						</div>
+    			</fieldset><p>
+							
+
+					</form>
+
+
+
+
+					</div>
+			<hr>
+			
+		 			<form>
+      <div  id=buttons>
+				<a href=# id=process_input><button class='btn btn-default'>Back</button></a>
+			</div>
+			</form>
+     
+
+		<h4> Directories: </h4>
+			<div id=directories>
+
+      </div>
+      <br>
+      	<a id=hide_files href=#><h4> Files: </h4></a>
+      <div id=files>
+			</div>
+
+
+		</center>
+		</div>
+	
+		<hr>
+<script type="text/javascript" src="{{ url_for('static', filename='js/uploadr.js') }}"></script>
+
+{% endblock %}

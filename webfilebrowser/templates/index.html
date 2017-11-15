@@ -1,11 +1,295 @@
+
 {% extends 'layout.html' %}
 
-{% block body %}  
+{%- block body %} 
+         
 <script type=text/javascript>
+/*var MAX_UPLOAD_FILE_SIZE = 102400*102400;
+var UPLOAD_URL = "/upload";
+var NEXT_URL   = "/files/";
+var PENDING_FILES  = [];
+
+
+$(document).ready(function(){initDropbox();$("#file-picker").on("change",
+ function(){handleFiles(this.files);});$("#upload-button").on("click", 
+function(e){e.preventDefault();doUpload();console.log('upload 
+done')})});function doUpload() {$("#progress").show();var $progressBar  
+ = $("#progress-bar");$("#upload-form :input").attr("disabled", 
+"disabled");$progressBar.css({"width": "0%"});fd = collectFormData();for
+ (var i = 0, ie = PENDING_FILES.length; i < ie; i++) {fd.append("file", PENDING_FILES[i]);}fd.append("__ajax", "true");
+ var xhr = $.ajax({
+xhr: function() {
+var xhrobj = $.ajaxSettings.xhr();
+if (xhrobj.upload) {
+xhrobj.upload.addEventListener("progress", function(event) {
+var percent = 0;
+var position = event.loaded || event.position;
+var total    = event.total;
+if (event.lengthComputable) {
+percent = Math.ceil(position / total * 100);
+}$progressBar.css({"width": percent + 
+"%"});$progressBar.text(percent + "%");}, false)}return xhrobj;},url: 
+UPLOAD_URL,method: "POST",contentType: false,processData: false,cache: 
+false,data: fd,success: function(data) {$progressBar.css({"width": 
+"100%"});
+data = JSON.parse(data);
+if (data.status === "error") {
+window.alert(data.msg);
+$("#upload-form :input").removeAttr("disabled");
+return;
+}
+else {
+console.log('refreshing')
+refreshEverything();
+}
+},
+});
+};
+function collectFormData() {
+var fd = new FormData();
+$("#upload-form :input").each(function() {
+var $this = $(this);
+var name  = $this.attr("name");
+var type  = $this.attr("type") || "";
+var value = $this.val();
+if (name === undefined) {
+return;
+}
+if (type === "file") {
+return;
+}
+if (type === "checkbox" || type === "radio") {
+if (!$this.is(":checked")) {
+return;
+}
+}
+fd.append(name, value);
+});
+return fd;
+}
+function handleFiles(files) {
+for (var i = 0, ie = files.length; i < ie; i++) {
+PENDING_FILES.push(files[i]);
+}
+}
+function initDropbox() {
+var $dropbox = $("#dropbox");
+$dropbox.on("dragenter", function(e) {
+e.stopPropagation();
+e.preventDefault();
+$(this).addClass("active");
+});
+$dropbox.on("dragover", function(e) {
+e.stopPropagation();
+e.preventDefault();
+});
+$dropbox.on("drop", function(e) {
+e.preventDefault();
+$(this).removeClass("active");
+var files = e.originalEvent.dataTransfer.files;
+handleFiles(files);
+$dropbox.text(PENDING_FILES.length + " files ready for upload!");
+});
+function stopDefault(e) {
+e.stopPropagation();
+e.preventDefault();
+}
+$(document).on("dragenter", stopDefault);
+$(document).on("dragover", stopDefault);
+$(document).on("drop", stopDefault);
+}
+*/
+var MAX_UPLOAD_FILE_SIZE = 1024*1024; // 1 MB
+var UPLOAD_URL = "/upload";
+var NEXT_URL   = "/files/";
+
+// List of pending files to handle when the Upload button is finally clicked.
+var PENDING_FILES  = [];
+
+
+$(document).ready(function() {
+    // Set up the drag/drop zone.
+    initDropbox();
+
+    // Set up the handler for the file input box.
+    $("#file-picker").on("change", function() {
+        handleFiles(this.files);
+    });
+
+    // Handle the submit button.
+    $("#upload-button").on("click", function(e) {
+        // If the user has JS disabled, none of this code is running but the
+        // file multi-upload input box should still work. In this case they'll
+        // just POST to the upload endpoint directly. However, with JS we'll do
+        // the POST using ajax and then redirect them ourself when done.
+        e.preventDefault();
+        doUpload();
+    })
+});
+
+
+function doUpload() {
+    $("#progress").show();
+    var $progressBar   = $("#progress-bar");
+
+    // Gray out the form.
+    $("#upload-form :input").attr("disabled", "disabled");
+
+    // Initialize the progress bar.
+    $progressBar.css({"width": "0%"});
+
+    // Collect the form data.
+    fd = collectFormData();
+
+    // Attach the files.
+    for (var i = 0, ie = PENDING_FILES.length; i < ie; i++) {
+        // Collect the other form data.
+        fd.append("file", PENDING_FILES[i]);
+    }
+
+    // Inform the back-end that we're doing this over ajax.
+    fd.append("__ajax", "true");
+
+    var xhr = $.ajax({
+        xhr: function() {
+            var xhrobj = $.ajaxSettings.xhr();
+            if (xhrobj.upload) {
+                xhrobj.upload.addEventListener("progress", function(event) {
+                    var percent = 0;
+                    var position = event.loaded || event.position;
+                    var total    = event.total;
+                    if (event.lengthComputable) {
+                        percent = Math.ceil(position / total * 100);
+                    }
+
+                    // Set the progress bar.
+                    $progressBar.css({"width": percent + "%"});
+                    $progressBar.text(percent + "%");
+                }, false)
+            }
+            return xhrobj;
+        },
+        url: UPLOAD_URL,
+        method: "POST",
+        contentType: false,
+        processData: false,
+        cache: false,
+        data: fd,
+        success: function(data) {
+            $progressBar.css({"width": "100%"});
+            data = JSON.parse(data);
+
+            // How'd it go?
+            if (data.status === "error") {
+                // Uh-oh.
+                window.alert(data.msg);
+                $("#upload-form :input").removeAttr("disabled");
+                return;
+            }
+            else {
+                // Ok! Get the UUID.
+                var uuid = data.msg;
+                window.location = NEXT_URL + uuid;
+            }
+        },
+    });
+}
+
+
+function collectFormData() {
+    // Go through all the form fields and collect their names/values.
+    var fd = new FormData();
+
+    $("#upload-form :input").each(function() {
+        var $this = $(this);
+        var name  = $this.attr("name");
+        var type  = $this.attr("type") || "";
+        var value = $this.val();
+
+        // No name = no care.
+        if (name === undefined) {
+            return;
+        }
+
+        // Skip the file upload box for now.
+        if (type === "file") {
+            return;
+        }
+
+        // Checkboxes? Only add their value if they're checked.
+        if (type === "checkbox" || type === "radio") {
+            if (!$this.is(":checked")) {
+                return;
+            }
+        }
+
+        fd.append(name, value);
+    });
+
+    return fd;
+}
+
+
+function handleFiles(files) {
+    // Add them to the pending files list.
+    for (var i = 0, ie = files.length; i < ie; i++) {
+        PENDING_FILES.push(files[i]);
+    }
+}
+
+
+function initDropbox() {
+    var $dropbox = $("#dropbox");
+
+    // On drag enter...
+    $dropbox.on("dragenter", function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        $(this).addClass("active");
+    });
+
+    // On drag over...
+    $dropbox.on("dragover", function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+    });
+
+    // On drop...
+    $dropbox.on("drop", function(e) {
+        e.preventDefault();
+        $(this).removeClass("active");
+
+        // Get the files.
+        var files = e.originalEvent.dataTransfer.files;
+        handleFiles(files);
+
+        // Update the display to acknowledge the number of pending files.
+        $dropbox.text(PENDING_FILES.length + " files ready for upload!");
+    });
+
+    // If the files are dropped outside of the drop zone, the browser will
+    // redirect to show the files in the window. To avoid that we can prevent
+    // the 'drop' event on the document.
+    function stopDefault(e) {
+        e.stopPropagation();
+        e.preventDefault();
+    }
+    $(document).on("dragenter", stopDefault);
+    $(document).on("dragover", stopDefault);
+    $(document).on("drop", stopDefault);
+}
+
+
+//
+//
+
+var file_queue = [];
+// file_queue.length = 0; to kill all items on array
+
+
 			$(function() {
 			  $('a#process_input').bind('click', function() {
-				$.getJSON('{{url_for("_back_")}}', {
-
+				$.getJSON('/_back_', {
 				}, function(data) 
 				{
 					var clear_us = ['directories','files', 'current_dir'];
@@ -16,11 +300,9 @@
 							clear_me.removeChild(clear_me.firstChild);
 						}
 					});
-
 					for (var keys in data)
 					{
           var test = data[keys]
-					
 					document.getElementById("current_dir").innerHTML = test['current_dir'];
           test['dirs_in_cwd'].map( function(item)
 						{
@@ -31,31 +313,26 @@
 						btn.onclick = function(){ButtonDirChange(this)};
             document.getElementById("directories").appendChild(btn);
          		});
-				
-
 					test['files_in_cwd'].map( function(item)
 						{
             var node_files = document.createElement('a');
             var textnode = document.createTextNode(item);
             node_files.appendChild(textnode);
 						node_files.title = item;
-						node_files.href = Flask.url_for("_get_file", {"file_name": item})
+						node_files.href = '#pushed' + item;
+						node_files.onclick = function(){ArrayPusher(test['clean_format_dir']+'/'+item)};
+						//Flask.url_for("_get_file", {"file_name": item})
             document.getElementById("files").appendChild(node_files);
           	});
-						
 						};
-			
 				});
 				return false;
 			  });
 			});
 			//end of _back
-
       $.getJSON('_first_open', function(data){
         for (var keys in data){
           var test = data[keys]
-          
-
           document.getElementById("current_dir").innerHTML = test['current_dir'];
           test['dirs_in_cwd'].map( function(item){
             var btn = document.createElement("BUTTON");
@@ -65,27 +342,24 @@
 						btn.onclick = function(){ButtonDirChange(this)};
             document.getElementById("directories").appendChild(btn);
           });
-
           test['files_in_cwd'].map( function(item){
             var node_files = document.createElement('a');
             var textnode = document.createTextNode(item);
 						node_files.appendChild(textnode);
 						node_files.title = item;
-						node_files.href = Flask.url_for("_get_file", {"file_name": item});
-            
+						node_files.href = '#pushed' + item;
+						node_files.onclick = function(){ArrayPusher(test['clean_format_dir']+'/'+item)};
             document.getElementById("files").appendChild(node_files);
           });
-          
-          
         };
-
       });
-			//end of first open
 			function ButtonDirChange(elem)
-			{
-				$.getJSON('{{url_for("_change_dir")}}',
+			{	
+				
+				$.getJSON('/_change_dir',
 				{
 					directory: elem.value
+					
 				}, function(data){
 					
 					var clear_us = ['directories','files', 'current_dir'];
@@ -96,9 +370,7 @@
 						{
 							clear_me.removeChild(clear_me.firstChild);
 						}
-
 					});
-
 					for (var keys in data)
 					{
           var test = data[keys]
@@ -114,81 +386,379 @@
             document.getElementById("directories").appendChild(btn);
          		});
 				
-
 					test['files_in_cwd'].map( function(item)
 						{
+						//RESUME HER
+						
+						
             var node_files = document.createElement('a');
             var textnode = document.createTextNode(item);
             node_files.appendChild(textnode);
 						node_files.title = item;
 						node_files.class = "btn btn-default";
-						node_files.href = Flask.url_for("_get_file", {"file_name": item});
-						node_files.onclick = function(){DownloadThis(this)};
+						node_files.href = '#pushed'+ item;
+						
+						node_files.onclick = function(){ArrayPusher(test['clean_format_dir']+'/'+item)};
+						//Flask.url_for("_get_file", {"file_name": item});
+						//put an if statement that checks array if file is there do nothing. if not. add to queue
             document.getElementById("files").appendChild(node_files);
           	});
-
 						};
 				});
 			};
-			//end of End of change dir
-			/*
-			function DownloadThis(elem)
+			//end of button change dir
+			function ArrayPusher(file_name)
 			{
-				$.getJSON('{{url_for("_get_file")}}',
+				if (file_queue.includes(file_name)) 
 				{
-					file_name: elem.value
-				}, function(data)
+						console.log(file_name + ' Existing Already' );
+				}
+				else
 				{
-					console.log(data)
-				});
-			
-			};
-			*/
-			//end of dl
+					//do something to add the values of array here
+					var files_on_queue = document.getElementById('files_on_queue');
+					var li = document.createElement('li');
+					li.appendChild(document.createTextNode(file_name) );
+					files_on_queue.appendChild(li);
+					console.log('Added: '+ file_name);
+					file_queue.push(file_name)
+				}
+				console.log(file_queue.length);
+			}
+			//end of array pusher
+			function ArrayClear()
+			{
+				file_queue.length = 0;
+				var files_on_queue = document.getElementById('files_on_queue');
+				var clear_me = document.getElementById('files_on_queue');
+				
+				while (clear_me.firstChild) 
+				{
+					clear_me.removeChild(clear_me.firstChild);
+				}
+				
+			}
+			//end of array clearer
+			$(document).ready(function(){
+						$( "#upload_button").click(function() {
+							$( "#input_upload").toggle(100);
+								$("#file_input").val("");
+								updateList() // TO MAKE IT EMPTY
+						});
+
+					});
+			//end of upload
+			$(document).ready(function(){
+						$( "#hide_files").click(function() {
+							$( "#files").toggle(200);
+						
+						});
+
+					});
+					//end of hiding the files
+			$(document).ready(function(){
+						$( "#utils_button").click(function() {
+							$( "#utils").toggle(100);
+						});
+
+					});
+					//end of utils hiding
+		updateList = function() {
+				/*var input = document.getElementById('file_input');
+				var output = document.getElementById('fileList');
+
+				output.innerHTML = '<ul>';
+				for (var i = 0; i < input.files.length; ++i) {
+					output.innerHTML += '<p>' + input.files.item(i).name + '</p>';
+				}
+			output.innerHTML += '</ul>';
+		*/}
+		//end of input file
+
+			//end of new upload
+			$(document).ready(function(){
+						$( "#create_dir_button_div").click(function() {
+							$( "#create_dir_div").toggle(100);
+						});
+
+					});
+			//end of create dir  
+			$(document).ready(function(){
+						$( "#delete_dir_button").click(function() {
+							//alert('BE CAREFUL WHEN DELETING THINGS')
+							$( "#delete_dir_div").toggle(100);
+							$("#alert_delete").show(100);
+							$("#delete_this_dir").hide(100);
+						});
+
+					});
+				$(document).ready(function(){delete_this_dir
+						$( "#close_button_del_dir").click(function() {
+							$( "#alert_delete").toggle(100);
+							$("#delete_this_dir").show(100);
+						});
+
+					});
+				/*
+				$(document).ready(function(){
+						$( "#delete_this_dir").click(function() {
+							alert('Directory Is now gone');
+							console.log('call python now');
+						});
+
+					});
+				/*/
+				$(document).ready(function(){
+						$( "#download_queue_button").click(function() {
+							$( "#download_for_the_button").toggle(100);
+						});
+
+					});
+
+				///
+
+//refrehs funct
+function refreshEverything() 
+{
+	
+    $.getJSON('_refresh', function(data)
+    {
+				var clear_us = ['files'];
+					clear_us.map( function(item) 
+					{
+						var clear_me = document.getElementById(item);
+						while (clear_me.firstChild) 
+						{
+							
+							clear_me.removeChild(clear_me.firstChild);
+						}
+					});
+
+       for (var keys in data){
+          var test = data[keys]
+					
+          test['files_in_cwd'].map( function(item){
+            var node_files = document.createElement('a');
+            var textnode = document.createTextNode(item);
+						node_files.appendChild(textnode);
+						node_files.title = item;
+						node_files.href = Flask.url_for("_get_file", {"file_name": item});
+            document.getElementById("files").appendChild(node_files);
+          });
+        };
+    });
+}
+//end of refresh everything
+function DeleteDirectory()
+{
+	var confirmm = confirm("You sure you want to delete \n" + $('p').text() );
+	if (confirmm == true) 
+	{
+		$.getJSON('/_delete_dir',
+		function(data)
+		{
+			alert(data['message']);
+			document.getElementById('process_input').click();
+		});
+	}
+	else
+	{
+
+	}
+};
+//end of del dir
+function Download()
+{
+	file_queue.map( function(item)
+	{
+		var safename = item.replace(/\//g, '++++++++||+||+|+|+||+++')
+		window.open(Flask.url_for("_get_file", {"file_name": safename}));
+	});
+
+	ArrayClear();	 
+}
+//end of dl script
+function DeleteQueue()
+{	
+	var confirmm = confirm("You sure you want to delete all in the queue?");
+	if (confirmm == true)
+	{
+		$.getJSON('/_delete_dir',
+		{list_of_files: file_queue},
+		function(data)
+		{
+			alert(data['message']);
+			//document.getElementById('process_input').click();
+		});
+		
+	}
+	
+}
+function Check()
+{
+	file_queue.map( function(item)
+	{
+		var safename = item.replace(/\//g, '++++++++||+||+|+|+||+++')
+		window.open(Flask.url_for("check_file", {"file_name": safename}));
+	});
+	 
+}
+//
+$(function() 
+{
+	$('#create_dir_button').bind('click', function()
+	{
+		$.getJSON('/_create_dir',
+		{
+			new_dir_name: document.getElementById('new_dir_name').value,
+			permission_of_dir: document.getElementById('dirs_permission').value
+
+		}, function(data){
+			alert(data['message']);
+
+		});
+	});
+});
 </script>
+
+<style> 
+								.alert {
+										padding: 20px;
+										background-color: #f44336;
+										color: white;
+								}
+
+								.closebtn {
+										margin-left: 15px;
+										color: white;
+										font-weight: bold;
+										float: right;
+										font-size: 22px;
+										line-height: 20px;
+										cursor: pointer;
+										transition: 0.3s;
+								}
+
+								.closebtn:hover {
+										color: black;
+								}
+
+
+</style>
 
 		<div class='container'>
 				<center>
-	{#	<h3>Enter a crypto term :)</h3>
-			<form>
-        
-			<div>
-				<label>
-					<input type="radio" class="radio" value="General" name="cat" />General</label>
-				<label>
-					<input type="radio" class="radio" value="Images" name="cat" />Images</label>
-				<label>
-					<input type="radio" class="radio" value="Tutorial" name="cat" />Tutorial</label>
-				<label>
-					<input type="radio" class="radio" value="CryptoCurrency" name="cat" />CryptoCurrency</label>
-				<br>
-				<input type=text size=5 name=proglang>
-				
-      </div>
-      
-		
-			<a href=# id=process_input><button class='btn btn-default'>Submit</button></a>
-     
-      </form>
-     #}
-     <h3> Current Directory: </h3>
-     <p id=current_dir> </p>
+		 <h3> Current Directory: </h3>
+			<p id=current_dir> </p>
+			
+			<a id=utils_button href=#utils >Utilities</a>
 
-			<h4> Directories: </h4>
+			<div id=utils style="display: none;">
+
+					<hr>
+					<a id=upload_button href=#Upload >Upload Something </a> 
+
+					<div id="input_upload" style="display: none;" >
+						<form name="addForm" id="addForm" method="POST" action="" novalidate enctype="multipart/form-data">
+					<input id="file-picker" type="file" name="file" accept="any" multiple><p>
+					<div id="dropbox">
+							Drag and Drop Files Here
+					</div><p>
+						<input type="submit" value="Upload!" id="upload-button">
+					<fieldset id="progress" style="display: none">
+						<legend>Files Progress</legend>
+						<div class="progress-trough">
+								<div id="progress-bar" class="progress-bar">0%</div>
+						</div>
+    			</fieldset><p>							
+					</form>
+					</div> 
+
+					<hr>
+					
+					<a id=create_dir_button_div href=#Create >Create Directory</a> 
+
+					<div id="create_dir_div" style="display: none;" >
+						<form>
+						<br>
+						<input type=text id=new_dir_name placeholder="Directory Name Here" required>
+						<input type=text id=dirs_permission maxlength="4"  placeholder="Permissions Name Here">
+						<br>
+						<br>
+						<input type="submit" value="Create!" id="create_dir_button">				
+						</form>
+					</div> 
+					
+					<hr>
+					
+					<a id=delete_dir_button href=#DELETE >DELETE Directory</a> 
+					
+					<div id="delete_this_dir" style="display: none;">
+						<br>
+						<br>
+						<input type="submit" value="Fuck it. kill dis dir!"  onclick="DeleteDirectory()">
+					</div>
+
+					<div id="delete_dir_div" style="display: none;" >
+						<br>
+						<form>
+							<div class="alert" id=alert_delete>
+								<span class="closebtn" id=close_button_del_dir>&times;</span> 
+								<strong>Danger!</strong> You are about to shove this directory's ass to the void!? you sure about this son?
+							</div>
+						</form>
+					</div> 
+					
+						<hr>
+					
+						<a id=download_queue_button href=#DOWNLOAD >Download all in queue</a> 
+						<div id=download_for_the_button style='display: none;'>
+						<br>
+						<a href=#dl onclick="Download();">Get them all, all of 'em</a>
+						<br>
+						<br>
+						<a href=#check onclick="Check();">View files (for vids and music)</a>
+						</div>
+					
+					<hr>
+					
+					
+						<a id=delete_queue_button href=#DELETE_QUEUE >DELETE ALL IN QUEUE</a> 
+						<div id=delete_for_the_button style='display: none;'> </div>
+						
+						<br>
+						<a href=#delqueue onclick="DeleteQueue();">Delete All In queue</a>
+					
+					<hr>
+
+			</div> 
+			
+		 			<form>
+      <div  id=buttons>
+				<br>
+				<a href=#backk id=process_input><button class='btn btn-default'>Back</button></a>
+			</div>
+			</form>
+     
+
+		<h4> Directories: </h4>
 			<div id=directories>
 
       </div>
       <br>
-      <h4> Files: </h4>
+
+			
+      	<a id=hide_files href=#files><h4> Files: </h4></a>
       <div id=files>
-			</div>
+		</div>
 
-			<form>
-      <div  id=buttons>
-				<a href=# id=process_input><button class='btn btn-default'>Back</button></a>
-			</div>
-			</form>
-		</center>
-    </div>
+			<a href=#clean onclick="ArrayClear();"><h4>Clear Queue </h4></a>
+			<ul id=files_on_queue>
 
-  {% endblock %}
+
+		
+		</div>
+	
+		<hr>
+
+{% endblock %}

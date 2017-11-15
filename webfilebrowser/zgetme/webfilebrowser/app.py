@@ -13,10 +13,13 @@ from multiprocessing import Process
 from time import sleep
 from random import randint
 import sys
+
+
 import File_Browser
 
 
-import shutil
+
+
 
 
 
@@ -26,35 +29,24 @@ import json
 import glob
 from uuid import uuid4
 
-import logging
-import traceback
 
-"""log = logging.getLogger('werkzeug') #uncomment for silent flask
-log.setLevel(logging.ERROR)
-"""
 jsglue = JSGlue()
 app = Flask(__name__)
 jsglue.init_app(app)
 filebrowser = File_Browser.FileBrowser()
+index = '/' #str(uuid.uuid4())
+print (index)
 
-good_ip_addresses = ['127.0.0.1', '192.168.1.10']
-
-index = '/' #+ str(uuid.uuid4())
-port= 8000#randint(1,65535)
-
-for i in range(5):
-    print ('PUT THIS ON AFTER THE IP OF YOUR BROWSER ' + ':'+ str(port) +index)
- 
+good_ip_addresses = ['127.0.0.1']
 
 def valid_ip_check_required(*args, **kwargs):
     def real_decorator(function):
         @wraps(function)
         def wrapper(*args, **kwargs):
-            
-            if request.remote_addr in  good_ip_addresses:
-                return function(*args, **kwargs)
+            if request.remote_addr in good_ip_addresses:
+                pass
             else:
-                return redirect("http://www.google.com")
+                sys.exit()
             
         return wrapper
     return real_decorator
@@ -65,16 +57,7 @@ class FORM_index(Form):
 	pass
 
 
-"""@app.errorhandler(404)
-def err404(error):
-    return redirect("http://www.google.com")
-"""
-@app.errorhandler(500)
-def err500(error):
-    return redirect("http://www.google.com")
-
 @app.route(index)
-@valid_ip_check_required()
 def index():
 	return render_template('index.html')
 
@@ -84,11 +67,16 @@ def _first_open():
 
 @app.route('/_change_dir')
 def _change_dir():
+	print ('STACK PASSED HERE')
     
 	directory = request.args.get('directory')
 	filebrowser.change_dir(str(directory))
 	return jsonify(dir_info=filebrowser.get_info())
 
+"""
+Please finish the gum dat upload file :) 
+
+"""
 
 @app.route('/_back_')
 def _back_():#ur generic cd ..
@@ -105,76 +93,14 @@ def _upload():
 @app.route('/get_file', defaults={'file_name': None})
 @app.route('/_get_file/<string:file_name>')
 def _get_file(file_name):
-    separated_paths = file_name
-    list_of_paths = separated_paths.split('++++++++||+||+|+|+||+++')
-    name_file = list_of_paths.pop() #the last
-
-    file_path = '/' + ('/').join([x for x in list_of_paths])
-    for i in range(10):
-        print (list_of_paths)
-        print (file_path)
-        
-    return send_from_directory(file_path, name_file,  as_attachment=True)
+    return send_from_directory(filebrowser.cur_dir_for_downloads(), file_name)#,  as_attachment=True)
 
 
-@app.route('/check_file', defaults={'file_name': None})
-@app.route('/check_file/<string:file_name>')
-def check_file(file_name):
-    separated_paths = file_name
-    list_of_paths = separated_paths.split('++++++++||+||+|+|+||+++')
-    name_file = list_of_paths.pop() #the last
-
-    file_path = '/' + ('/').join([x for x in list_of_paths])
-    return send_from_directory(file_path, name_file)#,  as_attachment=True)
-
-@app.route('/_create_dir')
-def _create_dir():
-    dir_name = request.args.get('new_dir_name')
-    permission = request.args.get('permission_of_dir')
-    dir_to_be_created = os.path.join(filebrowser.cur_dir_for_downloads(), dir_name)
-    try:
-            
-        if int(permission) > 7777:
-            return jsonify(message="Please set the appopriate permissions (ex: 755)")
-    except ValueError:
-        permission = 7666 #sorry for that evil number 
-
-    try:
-        os.mkdir(dir_to_be_created, int(permission))
-        return jsonify(message="Dir Created!")
-    except FileExistsError:
-
-        return jsonify(message='Directory Already Exists!')
-
-    
-
-@app.route('/_refresh')
-def _refresh():
-    return jsonify(dir_info=filebrowser.get_info())
-
-@app.route('/_delete_dir')
-def _delete_dir():
-    deleted_dir = filebrowser.cur_dir_for_downloads()
-    shutil.rmtree(filebrowser.cur_dir_for_downloads(), ignore_errors=True)
-    return jsonify(message=deleted_dir + "Was sent to the void.")
-
-@app.route('/_delete_files')
-def _delete_files():
-    for i in range(10):
-        print (request.args)
-    list_of_files = request.args.get['list_of_files']
-    return jsonify(message=list_of_files)
-#//please put prompt when you login to prompt for the uuid pre generated for production use :)
-#for personal use. its okay to ignore those uuid
 """
 Below is the code for upload section
 """
 
-"""
 
-
-TODO PLEASE FIX ALL THE ERRORS ON UPLOAD AND FIX THE SPACE ERROR REPLACE SPACE WITH \(space) for fluent shell
-"""
 
 
 
@@ -223,8 +149,7 @@ def upload():
     if is_ajax:
         return ajax_response(True, upload_key)
     else:
-        pass
-        #return redirect(url_for("upload_complete", uuid=upload_key))
+        return redirect(url_for("upload_complete", uuid=upload_key))
 	 #put something here to refresh the list of files in current dir
 
 
@@ -261,7 +186,7 @@ def ajax_response(status, msg):
 
 
 
-app.run(host="0.0.0.0", port=port, threaded=True, debug=True)#, ssl_context='adhoc')
+app.run(host="0.0.0.0", port=8000, threaded=True, debug=True)#, ssl_context='adhoc')
 #def main():
 """	
 	try:

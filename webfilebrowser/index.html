@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"><title>http://localhost:8000/#delqueue</title><link rel="stylesheet" type="text/css" href="index_files/viewsource.css"></head><body id="viewsource" class="wrap highlight" style="-moz-tab-size: 4" contextmenu="actions"><pre id="line1"><span>
+<span id="line2"></span></span><span class="doctype">&lt;!DOCTYPE html&gt;</span><span>
+<span id="line3"></span></span><span>&lt;<span class="start-tag">html</span> <span class="attribute-name">lang</span>="<a class="attribute-value">en</a>"&gt;</span><span>
+<span id="line4"></span>  </span><span>&lt;<span class="start-tag">head</span>&gt;</span><span>
+<span id="line5"></span>    </span><span>&lt;<span class="start-tag">meta</span> <span class="attribute-name">charset</span>="<a class="attribute-value">utf-8</a>"&gt;</span><span>
+<span id="line6"></span>    </span><span>&lt;<span class="start-tag">meta</span> <span class="attribute-name">name</span>="<a class="attribute-value">viewport</a>" <span class="attribute-name">content</span>="<a class="attribute-value">width=device-width, initial-scale=1, shrink-to-fit=no</a>"&gt;</span><span>
+<span id="line7"></span>    </span><span>&lt;<span class="start-tag">meta</span> <span class="attribute-name">name</span>="<a class="attribute-value">description</a>" <span class="attribute-name">content</span>="<a class="attribute-value"></a>"&gt;</span><span>
+<span id="line8"></span>    </span><span>&lt;<span class="start-tag">meta</span> <span class="attribute-name">name</span>="<a class="attribute-value">author</a>" <span class="attribute-name">content</span>="<a class="attribute-value"></a>"&gt;</span><span>
+<span id="line9"></span>    </span><span>&lt;<span class="start-tag">title</span>&gt;</span><span>FileBrowser On Browser</span><span>&lt;/<span class="end-tag">title</span>&gt;</span><span>
+<span id="line10"></span>    </span><span>&lt;<span class="start-tag">link</span> <span class="attribute-name">href</span>="<a class="attribute-value" href="view-source:http://localhost:8000/static/bootstrap.min.css">/static/bootstrap.min.css</a>" <span class="attribute-name">rel</span>="<a class="attribute-value">stylesheet</a>"&gt;</span><span>
+<span id="line11"></span>    </span><span>&lt;<span class="start-tag">link</span> <span class="attribute-name">href</span>="<a class="attribute-value" href="view-source:http://localhost:8000/static/font-awesome.min.css">/static/font-awesome.min.css</a>" <span class="attribute-name">rel</span>="<a class="attribute-value">stylesheet</a>" <span class="attribute-name">type</span>="<a class="attribute-value">text/css</a>"&gt;</span><span>
+<span id="line12"></span>    </span><span>&lt;<span class="start-tag">link</span> <span class="attribute-name">href</span>="<a class="attribute-value" href="view-source:http://localhost:8000/static/clean-blog.min.css">/static/clean-blog.min.css</a>" <span class="attribute-name">rel</span>="<a class="attribute-value">stylesheet</a>"&gt;</span><span>
+<span id="line13"></span>    </span><span>&lt;<span class="start-tag">link</span> <span class="attribute-name">href</span>="<a class="attribute-value" href="view-source:https://fonts.googleapis.com/css?family=Adamina">https://fonts.googleapis.com/css?family=Adamina</a>" <span class="attribute-name">rel</span>="<a class="attribute-value">stylesheet</a>"&gt;</span><span> 
+<span id="line14"></span>    </span><span>&lt;<span class="start-tag">link</span> <span class="attribute-name">href</span>="<a class="attribute-value" href="view-source:https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css</a>" <span class="attribute-name">rel</span>="<a class="attribute-value">stylesheet</a>"&gt;</span><span> 
+<span id="line15"></span>    </span><span>&lt;<span class="start-tag">script</span> <span class="attribute-name">src</span>="<a class="attribute-value" href="view-source:http://localhost:8000/static/js/jquery.js">/static/js/jquery.js</a>"&gt;</span><span></span><span>&lt;/<span class="end-tag">script</span>&gt;</span><span>
+<span id="line16"></span>    </span><span>&lt;<span class="start-tag">style</span>&gt;</span><span>
+<span id="line17"></span>      html *{
+<span id="line18"></span>        font-family: 'Adamina', serif;
+<span id="line19"></span>      }
+<span id="line20"></span>			#directories ul{
+<span id="line21"></span>			list-style: none;
+<span id="line22"></span>			}
+<span id="line23"></span>			#directories li{
+<span id="line24"></span>			display: inline;
+<span id="line25"></span>			}
+<span id="line26"></span>      #directories button{
+<span id="line27"></span>        display: inline;
+<span id="line28"></span>        padding-right: 10px;
+<span id="line29"></span>        
+<span id="line30"></span>      }
+<span id="line31"></span>				
+<span id="line32"></span>      #files a{
+<span id="line33"></span>        display: inline;
+<span id="line34"></span>        padding-right: 10px;
+<span id="line35"></span>      }
+<span id="line36"></span>
+<span id="line37"></span>      #fileList p{
+<span id="line38"></span>        display: inline;
+<span id="line39"></span>        padding-right: 10px;
+<span id="line40"></span>      }
+<span id="line41"></span>
+<span id="line42"></span>		</span><span>&lt;/<span class="end-tag">style</span>&gt;</span><span>
+<span id="line43"></span>		</span><span>&lt;<span class="start-tag">script</span> <span class="attribute-name">src</span>="<a class="attribute-value" href="view-source:http://localhost:8000/static/js/jquery.js">/static/js/jquery.js</a>"&gt;</span><span></span><span>&lt;/<span class="end-tag">script</span>&gt;</span><span></span><span>&lt;<span class="start-tag">script</span> <span class="attribute-name">src</span>="<a class="attribute-value" href="view-source:http://localhost:8000/jsglue.js">/jsglue.js</a>" <span class="attribute-name">type</span>="<a class="attribute-value">text/javascript</a>"&gt;</span><span></span><span>&lt;/<span class="end-tag">script</span>&gt;</span><span>
+<span id="line44"></span>  </span><span>&lt;/<span class="end-tag">head</span>&gt;</span><span>
+<span id="line45"></span>  </span><span>&lt;<span class="start-tag">body</span>&gt;</span><span>    
+<span id="line46"></span>         
+<span id="line47"></span></span><span>&lt;<span class="start-tag">script</span> <span class="attribute-name">type</span>=<a class="attribute-value">text/javascript</a>&gt;</span><span>
+<span id="line48"></span>var MAX_UPLOAD_FILE_SIZE = 102400*102400;
+<span id="line49"></span>var UPLOAD_URL = "/upload";
+<span id="line50"></span>var NEXT_URL   = "/files/";
+<span id="line51"></span>var PENDING_FILES  = [];
+<span id="line52"></span>
+<span id="line53"></span>
+<span id="line54"></span>$(document).ready(function(){initDropbox();$("#file-picker").on("change",
+ function(){handleFiles(this.files);});$("#upload-button").on("click", 
+function(e){e.preventDefault();doUpload();console.log('upload 
+done')})});function doUpload() {$("#progress").show();var $progressBar  
+ = $("#progress-bar");$("#upload-form :input").attr("disabled", 
+"disabled");$progressBar.css({"width": "0%"});fd = collectFormData();for
+ (var i = 0, ie = PENDING_FILES.length; i </span><span>&lt; </span><span>ie; i++) {fd.append("file", PENDING_FILES[i]);}fd.append("__ajax", "true");
+<span id="line55"></span> var xhr = $.ajax({
+<span id="line56"></span>xhr: function() {
+<span id="line57"></span>var xhrobj = $.ajaxSettings.xhr();
+<span id="line58"></span>if (xhrobj.upload) {
+<span id="line59"></span>xhrobj.upload.addEventListener("progress", function(event) {
+<span id="line60"></span>var percent = 0;
+<span id="line61"></span>var position = event.loaded || event.position;
+<span id="line62"></span>var total    = event.total;
+<span id="line63"></span>if (event.lengthComputable) {
+<span id="line64"></span>percent = Math.ceil(position / total * 100);
+<span id="line65"></span>}$progressBar.css({"width": percent + 
+"%"});$progressBar.text(percent + "%");}, false)}return xhrobj;},url: 
+UPLOAD_URL,method: "POST",contentType: false,processData: false,cache: 
+false,data: fd,success: function(data) {$progressBar.css({"width": 
+"100%"});
+<span id="line66"></span>data = JSON.parse(data);
+<span id="line67"></span>if (data.status === "error") {
+<span id="line68"></span>window.alert(data.msg);
+<span id="line69"></span>$("#upload-form :input").removeAttr("disabled");
+<span id="line70"></span>return;
+<span id="line71"></span>}
+<span id="line72"></span>else {
+<span id="line73"></span>console.log('refreshing')
+<span id="line74"></span>refreshEverything();
+<span id="line75"></span>}
+<span id="line76"></span>},
+<span id="line77"></span>});
+<span id="line78"></span>};
+<span id="line79"></span>function collectFormData() {
+<span id="line80"></span>var fd = new FormData();
+<span id="line81"></span>$("#upload-form :input").each(function() {
+<span id="line82"></span>var $this = $(this);
+<span id="line83"></span>var name  = $this.attr("name");
+<span id="line84"></span>var type  = $this.attr("type") || "";
+<span id="line85"></span>var value = $this.val();
+<span id="line86"></span>if (name === undefined) {
+<span id="line87"></span>return;
+<span id="line88"></span>}
+<span id="line89"></span>if (type === "file") {
+<span id="line90"></span>return;
+<span id="line91"></span>}
+<span id="line92"></span>if (type === "checkbox" || type === "radio") {
+<span id="line93"></span>if (!$this.is(":checked")) {
+<span id="line94"></span>return;
+<span id="line95"></span>}
+<span id="line96"></span>}
+<span id="line97"></span>fd.append(name, value);
+<span id="line98"></span>});
+<span id="line99"></span>return fd;
+<span id="line100"></span>}
+<span id="line101"></span>function handleFiles(files) {
+<span id="line102"></span>for (var i = 0, ie = files.length; i </span><span>&lt; </span><span>ie; i++) {
+<span id="line103"></span>PENDING_FILES.push(files[i]);
+<span id="line104"></span>}
+<span id="line105"></span>}
+<span id="line106"></span>function initDropbox() {
+<span id="line107"></span>var $dropbox = $("#dropbox");
+<span id="line108"></span>$dropbox.on("dragenter", function(e) {
+<span id="line109"></span>e.stopPropagation();
+<span id="line110"></span>e.preventDefault();
+<span id="line111"></span>$(this).addClass("active");
+<span id="line112"></span>});
+<span id="line113"></span>$dropbox.on("dragover", function(e) {
+<span id="line114"></span>e.stopPropagation();
+<span id="line115"></span>e.preventDefault();
+<span id="line116"></span>});
+<span id="line117"></span>$dropbox.on("drop", function(e) {
+<span id="line118"></span>e.preventDefault();
+<span id="line119"></span>$(this).removeClass("active");
+<span id="line120"></span>var files = e.originalEvent.dataTransfer.files;
+<span id="line121"></span>handleFiles(files);
+<span id="line122"></span>$dropbox.text(PENDING_FILES.length + " files ready for upload!");
+<span id="line123"></span>});
+<span id="line124"></span>function stopDefault(e) {
+<span id="line125"></span>e.stopPropagation();
+<span id="line126"></span>e.preventDefault();
+<span id="line127"></span>}
+<span id="line128"></span>$(document).on("dragenter", stopDefault);
+<span id="line129"></span>$(document).on("dragover", stopDefault);
+<span id="line130"></span>$(document).on("drop", stopDefault);
+<span id="line131"></span>}
+<span id="line132"></span>
+<span id="line133"></span>/*
+<span id="line134"></span>
+<span id="line135"></span>*/
+<span id="line136"></span>
+<span id="line137"></span>var file_queue = [];
+<span id="line138"></span>// file_queue.length = 0; to kill all items on array
+<span id="line139"></span>
+<span id="line140"></span>
+<span id="line141"></span>			$(function() {
+<span id="line142"></span>			  $('a#process_input').bind('click', function() {
+<span id="line143"></span>				$.getJSON('/_back_', {
+<span id="line144"></span>				}, function(data) 
+<span id="line145"></span>				{
+<span id="line146"></span>					var clear_us = ['directories','files', 'current_dir'];
+<span id="line147"></span>					clear_us.map( function(item) 
+<span id="line148"></span>					{
+<span id="line149"></span>						var clear_me = document.getElementById(item);
+<span id="line150"></span>						while (clear_me.firstChild) {
+<span id="line151"></span>							clear_me.removeChild(clear_me.firstChild);
+<span id="line152"></span>						}
+<span id="line153"></span>					});
+<span id="line154"></span>					for (var keys in data)
+<span id="line155"></span>					{
+<span id="line156"></span>          var test = data[keys]
+<span id="line157"></span>					document.getElementById("current_dir").innerHTML = test['current_dir'];
+<span id="line158"></span>          test['dirs_in_cwd'].map( function(item)
+<span id="line159"></span>						{
+<span id="line160"></span>            var btn = document.createElement("BUTTON");
+<span id="line161"></span>            var textnode = document.createTextNode(item);
+<span id="line162"></span>            btn.appendChild(textnode);
+<span id="line163"></span>						btn.value = item;
+<span id="line164"></span>						btn.onclick = function(){ButtonDirChange(this)};
+<span id="line165"></span>            document.getElementById("directories").appendChild(btn);
+<span id="line166"></span>         		});
+<span id="line167"></span>					test['files_in_cwd'].map( function(item)
+<span id="line168"></span>						{
+<span id="line169"></span>            var node_files = document.createElement('a');
+<span id="line170"></span>            var textnode = document.createTextNode(item);
+<span id="line171"></span>            node_files.appendChild(textnode);
+<span id="line172"></span>						node_files.title = item;
+<span id="line173"></span>						node_files.href = '#pushed' + item;
+<span id="line174"></span>						node_files.onclick = function(){ArrayPusher(test['clean_format_dir']+'/'+item)};
+<span id="line175"></span>						//Flask.url_for("_get_file", {"file_name": item})
+<span id="line176"></span>            document.getElementById("files").appendChild(node_files);
+<span id="line177"></span>          	});
+<span id="line178"></span>						};
+<span id="line179"></span>				});
+<span id="line180"></span>				return false;
+<span id="line181"></span>			  });
+<span id="line182"></span>			});
+<span id="line183"></span>			//end of _back
+<span id="line184"></span>      $.getJSON('_first_open', function(data){
+<span id="line185"></span>        for (var keys in data){
+<span id="line186"></span>          var test = data[keys]
+<span id="line187"></span>          document.getElementById("current_dir").innerHTML = test['current_dir'];
+<span id="line188"></span>          test['dirs_in_cwd'].map( function(item){
+<span id="line189"></span>            var btn = document.createElement("BUTTON");
+<span id="line190"></span>            var textnode = document.createTextNode(item);
+<span id="line191"></span>            btn.appendChild(textnode);
+<span id="line192"></span>						btn.value = item;
+<span id="line193"></span>						btn.onclick = function(){ButtonDirChange(this)};
+<span id="line194"></span>            document.getElementById("directories").appendChild(btn);
+<span id="line195"></span>          });
+<span id="line196"></span>          test['files_in_cwd'].map( function(item){
+<span id="line197"></span>            var node_files = document.createElement('a');
+<span id="line198"></span>            var textnode = document.createTextNode(item);
+<span id="line199"></span>						node_files.appendChild(textnode);
+<span id="line200"></span>						node_files.title = item;
+<span id="line201"></span>						node_files.href = '#pushed' + item;
+<span id="line202"></span>						node_files.onclick = function(){ArrayPusher(test['clean_format_dir']+'/'+item)};
+<span id="line203"></span>            document.getElementById("files").appendChild(node_files);
+<span id="line204"></span>          });
+<span id="line205"></span>        };
+<span id="line206"></span>      });
+<span id="line207"></span>			function ButtonDirChange(elem)
+<span id="line208"></span>			{
+<span id="line209"></span>				$.getJSON('/_change_dir',
+<span id="line210"></span>				{
+<span id="line211"></span>					directory: elem.value
+<span id="line212"></span>				}, function(data){
+<span id="line213"></span>					
+<span id="line214"></span>					var clear_us = ['directories','files', 'current_dir'];
+<span id="line215"></span>					clear_us.map( function(item) 
+<span id="line216"></span>					{
+<span id="line217"></span>						var clear_me = document.getElementById(item);
+<span id="line218"></span>						while (clear_me.firstChild) 
+<span id="line219"></span>						{
+<span id="line220"></span>							clear_me.removeChild(clear_me.firstChild);
+<span id="line221"></span>						}
+<span id="line222"></span>					});
+<span id="line223"></span>					for (var keys in data)
+<span id="line224"></span>					{
+<span id="line225"></span>          var test = data[keys]
+<span id="line226"></span>					
+<span id="line227"></span>					document.getElementById("current_dir").innerHTML = test['current_dir'];
+<span id="line228"></span>          test['dirs_in_cwd'].map( function(item)
+<span id="line229"></span>						{
+<span id="line230"></span>            var btn = document.createElement("BUTTON");
+<span id="line231"></span>            var textnode = document.createTextNode(item);
+<span id="line232"></span>            btn.appendChild(textnode);
+<span id="line233"></span>						btn.value = item;
+<span id="line234"></span>						btn.onclick = function(){ButtonDirChange(this)};
+<span id="line235"></span>            document.getElementById("directories").appendChild(btn);
+<span id="line236"></span>         		});
+<span id="line237"></span>				
+<span id="line238"></span>					test['files_in_cwd'].map( function(item)
+<span id="line239"></span>						{
+<span id="line240"></span>						//RESUME HER
+<span id="line241"></span>						
+<span id="line242"></span>						
+<span id="line243"></span>            var node_files = document.createElement('a');
+<span id="line244"></span>            var textnode = document.createTextNode(item);
+<span id="line245"></span>            node_files.appendChild(textnode);
+<span id="line246"></span>						node_files.title = item;
+<span id="line247"></span>						node_files.class = "btn btn-default";
+<span id="line248"></span>						node_files.href = '#pushed'+ item;
+<span id="line249"></span>						
+<span id="line250"></span>						node_files.onclick = function(){ArrayPusher(test['clean_format_dir']+'/'+item)};
+<span id="line251"></span>						//Flask.url_for("_get_file", {"file_name": item});
+<span id="line252"></span>						//put an if statement that checks array if file is there do nothing. if not. add to queue
+<span id="line253"></span>            document.getElementById("files").appendChild(node_files);
+<span id="line254"></span>          	});
+<span id="line255"></span>						};
+<span id="line256"></span>				});
+<span id="line257"></span>			};
+<span id="line258"></span>			//end of button change dir
+<span id="line259"></span>			function ArrayPusher(file_name)
+<span id="line260"></span>			{
+<span id="line261"></span>				if (file_queue.includes(file_name)) 
+<span id="line262"></span>				{
+<span id="line263"></span>						console.log(file_name + ' Existing Already' );
+<span id="line264"></span>				}
+<span id="line265"></span>				else
+<span id="line266"></span>				{
+<span id="line267"></span>					//do something to add the values of array here
+<span id="line268"></span>					var files_on_queue = document.getElementById('files_on_queue');
+<span id="line269"></span>					var li = document.createElement('li');
+<span id="line270"></span>					li.appendChild(document.createTextNode(file_name) );
+<span id="line271"></span>					files_on_queue.appendChild(li);
+<span id="line272"></span>					console.log('Added: '+ file_name);
+<span id="line273"></span>					file_queue.push(file_name)
+<span id="line274"></span>				}
+<span id="line275"></span>				console.log(file_queue.length);
+<span id="line276"></span>			}
+<span id="line277"></span>			//end of array pusher
+<span id="line278"></span>			function ArrayClear()
+<span id="line279"></span>			{
+<span id="line280"></span>				file_queue.length = 0;
+<span id="line281"></span>				var files_on_queue = document.getElementById('files_on_queue');
+<span id="line282"></span>				var clear_me = document.getElementById('files_on_queue');
+<span id="line283"></span>				
+<span id="line284"></span>				while (clear_me.firstChild) 
+<span id="line285"></span>				{
+<span id="line286"></span>					clear_me.removeChild(clear_me.firstChild);
+<span id="line287"></span>				}
+<span id="line288"></span>				
+<span id="line289"></span>			}
+<span id="line290"></span>			//end of array clearer
+<span id="line291"></span>			$(document).ready(function(){
+<span id="line292"></span>						$( "#upload_button").click(function() {
+<span id="line293"></span>							$( "#input_upload").toggle(100);
+<span id="line294"></span>								$("#file_input").val("");
+<span id="line295"></span>								updateList() // TO MAKE IT EMPTY
+<span id="line296"></span>						});
+<span id="line297"></span>
+<span id="line298"></span>					});
+<span id="line299"></span>			//end of upload
+<span id="line300"></span>			$(document).ready(function(){
+<span id="line301"></span>						$( "#hide_files").click(function() {
+<span id="line302"></span>							$( "#files").toggle(200);
+<span id="line303"></span>						
+<span id="line304"></span>						});
+<span id="line305"></span>
+<span id="line306"></span>					});
+<span id="line307"></span>					//end of hiding the files
+<span id="line308"></span>			$(document).ready(function(){
+<span id="line309"></span>						$( "#utils_button").click(function() {
+<span id="line310"></span>							$( "#utils").toggle(100);
+<span id="line311"></span>						});
+<span id="line312"></span>
+<span id="line313"></span>					});
+<span id="line314"></span>					//end of utils hiding
+<span id="line315"></span>		updateList = function() {
+<span id="line316"></span>				/*var input = document.getElementById('file_input');
+<span id="line317"></span>				var output = document.getElementById('fileList');
+<span id="line318"></span>
+<span id="line319"></span>				output.innerHTML = '</span><span>&lt;u</span><span>l&gt;';
+<span id="line320"></span>				for (var i = 0; i </span><span>&lt; </span><span>input.files.length; ++i) {
+<span id="line321"></span>					output.innerHTML += '</span><span>&lt;p</span><span>&gt;' + input.files.item(i).name + '</span><span>&lt;/<span></span>p</span><span>&gt;';
+<span id="line322"></span>				}
+<span id="line323"></span>			output.innerHTML += '</span><span>&lt;/<span></span>u</span><span>l&gt;';
+<span id="line324"></span>		*/}
+<span id="line325"></span>		//end of input file
+<span id="line326"></span>
+<span id="line327"></span>			//end of new upload
+<span id="line328"></span>			$(document).ready(function(){
+<span id="line329"></span>						$( "#create_dir_button_div").click(function() {
+<span id="line330"></span>							$( "#create_dir_div").toggle(100);
+<span id="line331"></span>						});
+<span id="line332"></span>
+<span id="line333"></span>					});
+<span id="line334"></span>			//end of create dir  
+<span id="line335"></span>			$(document).ready(function(){
+<span id="line336"></span>						$( "#delete_dir_button").click(function() {
+<span id="line337"></span>							//alert('BE CAREFUL WHEN DELETING THINGS')
+<span id="line338"></span>							$( "#delete_dir_div").toggle(100);
+<span id="line339"></span>							$("#alert_delete").show(100);
+<span id="line340"></span>							$("#delete_this_dir").hide(100);
+<span id="line341"></span>						});
+<span id="line342"></span>
+<span id="line343"></span>					});
+<span id="line344"></span>				$(document).ready(function(){delete_this_dir
+<span id="line345"></span>						$( "#close_button_del_dir").click(function() {
+<span id="line346"></span>							$( "#alert_delete").toggle(100);
+<span id="line347"></span>							$("#delete_this_dir").show(100);
+<span id="line348"></span>						});
+<span id="line349"></span>
+<span id="line350"></span>					});
+<span id="line351"></span>				/*
+<span id="line352"></span>				$(document).ready(function(){
+<span id="line353"></span>						$( "#delete_this_dir").click(function() {
+<span id="line354"></span>							alert('Directory Is now gone');
+<span id="line355"></span>							console.log('call python now');
+<span id="line356"></span>						});
+<span id="line357"></span>
+<span id="line358"></span>					});
+<span id="line359"></span>				/*/
+<span id="line360"></span>				$(document).ready(function(){
+<span id="line361"></span>						$( "#download_queue_button").click(function() {
+<span id="line362"></span>							$( "#download_for_the_button").toggle(100);
+<span id="line363"></span>						});
+<span id="line364"></span>
+<span id="line365"></span>					});
+<span id="line366"></span>
+<span id="line367"></span>				///
+<span id="line368"></span>
+<span id="line369"></span>//refrehs funct
+<span id="line370"></span>function refreshEverything() 
+<span id="line371"></span>{
+<span id="line372"></span>	
+<span id="line373"></span>    $.getJSON('_refresh', function(data)
+<span id="line374"></span>    {
+<span id="line375"></span>				var clear_us = ['files'];
+<span id="line376"></span>					clear_us.map( function(item) 
+<span id="line377"></span>					{
+<span id="line378"></span>						var clear_me = document.getElementById(item);
+<span id="line379"></span>						while (clear_me.firstChild) 
+<span id="line380"></span>						{
+<span id="line381"></span>							
+<span id="line382"></span>							clear_me.removeChild(clear_me.firstChild);
+<span id="line383"></span>						}
+<span id="line384"></span>					});
+<span id="line385"></span>
+<span id="line386"></span>       for (var keys in data){
+<span id="line387"></span>          var test = data[keys]
+<span id="line388"></span>					
+<span id="line389"></span>          test['files_in_cwd'].map( function(item){
+<span id="line390"></span>            var node_files = document.createElement('a');
+<span id="line391"></span>            var textnode = document.createTextNode(item);
+<span id="line392"></span>						node_files.appendChild(textnode);
+<span id="line393"></span>						node_files.title = item;
+<span id="line394"></span>						node_files.href = Flask.url_for("_get_file", {"file_name": item});
+<span id="line395"></span>            document.getElementById("files").appendChild(node_files);
+<span id="line396"></span>          });
+<span id="line397"></span>        };
+<span id="line398"></span>    });
+<span id="line399"></span>}
+<span id="line400"></span>//end of refresh everything
+<span id="line401"></span>function DeleteDirectory()
+<span id="line402"></span>{
+<span id="line403"></span>	var confirmm = confirm("You sure you want to delete \n" + $('p').text() );
+<span id="line404"></span>	if (confirmm == true) 
+<span id="line405"></span>	{
+<span id="line406"></span>		$.getJSON('/_delete_dir',
+<span id="line407"></span>		function(data)
+<span id="line408"></span>		{
+<span id="line409"></span>			alert(data['message']);
+<span id="line410"></span>			document.getElementById('process_input').click();
+<span id="line411"></span>		});
+<span id="line412"></span>	}
+<span id="line413"></span>	else
+<span id="line414"></span>	{
+<span id="line415"></span>
+<span id="line416"></span>	}
+<span id="line417"></span>};
+<span id="line418"></span>//end of del dir
+<span id="line419"></span>function Download()
+<span id="line420"></span>{
+<span id="line421"></span>	file_queue.map( function(item)
+<span id="line422"></span>	{
+<span id="line423"></span>		var safename = item.replace(/\//g, '++++++++||+||+|+|+||+++')
+<span id="line424"></span>		window.open(Flask.url_for("_get_file", {"file_name": safename}));
+<span id="line425"></span>	});
+<span id="line426"></span>
+<span id="line427"></span>	ArrayClear();	 
+<span id="line428"></span>}
+<span id="line429"></span>//end of dl script
+<span id="line430"></span>function DeleteQueue()
+<span id="line431"></span>{	
+<span id="line432"></span>	var confirmm = confirm("You sure you want to delete all in the queue?");
+<span id="line433"></span>	if (confirmm == true)
+<span id="line434"></span>	{
+<span id="line435"></span>		$.getJSON('/_delete_dir',
+<span id="line436"></span>		{list_of_files: file_queue},
+<span id="line437"></span>		function(data)
+<span id="line438"></span>		{
+<span id="line439"></span>			alert(data['message']);
+<span id="line440"></span>			//document.getElementById('process_input').click();
+<span id="line441"></span>		});
+<span id="line442"></span>		
+<span id="line443"></span>	}
+<span id="line444"></span>	
+<span id="line445"></span>}
+<span id="line446"></span>function Check()
+<span id="line447"></span>{
+<span id="line448"></span>	file_queue.map( function(item)
+<span id="line449"></span>	{
+<span id="line450"></span>		var safename = item.replace(/\//g, '++++++++||+||+|+|+||+++')
+<span id="line451"></span>		window.open(Flask.url_for("check_file", {"file_name": safename}));
+<span id="line452"></span>	});
+<span id="line453"></span>	 
+<span id="line454"></span>}
+<span id="line455"></span>//
+<span id="line456"></span>$(function() 
+<span id="line457"></span>{
+<span id="line458"></span>	$('#create_dir_button').bind('click', function()
+<span id="line459"></span>	{
+<span id="line460"></span>		$.getJSON('/_create_dir',
+<span id="line461"></span>		{
+<span id="line462"></span>			new_dir_name: document.getElementById('new_dir_name').value,
+<span id="line463"></span>			permission_of_dir: document.getElementById('dirs_permission').value
+<span id="line464"></span>
+<span id="line465"></span>		}, function(data){
+<span id="line466"></span>			alert(data['message']);
+<span id="line467"></span>
+<span id="line468"></span>		});
+<span id="line469"></span>	});
+<span id="line470"></span>});
+<span id="line471"></span>
+<span id="line472"></span>
+<span id="line473"></span>
+<span id="line474"></span></span><span>&lt;/<span class="end-tag">script</span>&gt;</span><span>
+<span id="line475"></span>
+<span id="line476"></span></span><span>&lt;<span class="start-tag">style</span>&gt;</span><span> 
+<span id="line477"></span>								.alert {
+<span id="line478"></span>										padding: 20px;
+<span id="line479"></span>										background-color: #f44336;
+<span id="line480"></span>										color: white;
+<span id="line481"></span>								}
+<span id="line482"></span>
+<span id="line483"></span>								.closebtn {
+<span id="line484"></span>										margin-left: 15px;
+<span id="line485"></span>										color: white;
+<span id="line486"></span>										font-weight: bold;
+<span id="line487"></span>										float: right;
+<span id="line488"></span>										font-size: 22px;
+<span id="line489"></span>										line-height: 20px;
+<span id="line490"></span>										cursor: pointer;
+<span id="line491"></span>										transition: 0.3s;
+<span id="line492"></span>								}
+<span id="line493"></span>
+<span id="line494"></span>								.closebtn:hover {
+<span id="line495"></span>										color: black;
+<span id="line496"></span>								}
+<span id="line497"></span>
+<span id="line498"></span>
+<span id="line499"></span></span><span>&lt;/<span class="end-tag">style</span>&gt;</span><span>
+<span id="line500"></span>
+<span id="line501"></span>		</span><span>&lt;<span class="start-tag">div</span> <span class="attribute-name">class</span>='<a class="attribute-value">container</a>'&gt;</span><span>
+<span id="line502"></span>				</span><span>&lt;<span class="start-tag">center</span>&gt;</span><span>
+<span id="line503"></span>		 </span><span>&lt;<span class="start-tag">h3</span>&gt;</span><span> Current Directory: </span><span>&lt;/<span class="end-tag">h3</span>&gt;</span><span>
+<span id="line504"></span>			</span><span>&lt;<span class="start-tag">p</span> <span class="attribute-name">id</span>=<a class="attribute-value">current_dir</a>&gt;</span><span> </span><span>&lt;/<span class="end-tag">p</span>&gt;</span><span>
+<span id="line505"></span>			
+<span id="line506"></span>			</span><span>&lt;<span class="start-tag">a</span> <span class="attribute-name">id</span>=<a class="attribute-value">utils_button</a> <span class="attribute-name">href</span>=<a class="attribute-value" href="view-source:http://localhost:8000/#utils">#utils</a> &gt;</span><span>Utilities</span><span>&lt;/<span class="end-tag">a</span>&gt;</span><span>
+<span id="line507"></span>
+<span id="line508"></span>			</span><span>&lt;<span class="start-tag">div</span> <span class="attribute-name">id</span>=<a class="attribute-value">utils</a> <span class="attribute-name">style</span>="<a class="attribute-value">display: none;</a>"&gt;</span><span>
+<span id="line509"></span>
+<span id="line510"></span>					</span><span>&lt;<span class="start-tag">hr</span>&gt;</span><span>
+<span id="line511"></span>					</span><span>&lt;<span class="start-tag">a</span> <span class="attribute-name">id</span>=<a class="attribute-value">upload_button</a> <span class="attribute-name">href</span>=<a class="attribute-value" href="view-source:http://localhost:8000/#Upload">#Upload</a> &gt;</span><span>Upload Something </span><span>&lt;/<span class="end-tag">a</span>&gt;</span><span> 
+<span id="line512"></span>
+<span id="line513"></span>					</span><span>&lt;<span class="start-tag">div</span> <span class="attribute-name">id</span>="<a class="attribute-value">input_upload</a>" <span class="attribute-name">style</span>="<a class="attribute-value">display: none;</a>" &gt;</span><span>
+<span id="line514"></span>						</span><span>&lt;<span class="start-tag">form</span> <span class="attribute-name">name</span>="<a class="attribute-value">addForm</a>" <span class="attribute-name">id</span>="<a class="attribute-value">addForm</a>" <span class="attribute-name">method</span>="<a class="attribute-value">POST</a>" <span class="attribute-name">action</span>="<a class="attribute-value" href="view-source:http://localhost:8000/"></a>" <span class="attribute-name">novalidate</span> <span class="attribute-name">enctype</span>="<a class="attribute-value">multipart/form-data</a>"&gt;</span><span>
+<span id="line515"></span>					</span><span>&lt;<span class="start-tag">input</span> <span class="attribute-name">id</span>="<a class="attribute-value">file-picker</a>" <span class="attribute-name">type</span>="<a class="attribute-value">file</a>" <span class="attribute-name">name</span>="<a class="attribute-value">file</a>" <span class="attribute-name">accept</span>="<a class="attribute-value">any</a>" <span class="attribute-name">multiple</span>&gt;</span><span></span><span>&lt;<span class="start-tag">p</span>&gt;</span><span>
+<span id="line516"></span>					</span><span>&lt;<span class="start-tag">div</span> <span class="attribute-name">id</span>="<a class="attribute-value">dropbox</a>"&gt;</span><span>
+<span id="line517"></span>							Drag and Drop Files Here
+<span id="line518"></span>					</span><span>&lt;/<span class="end-tag">div</span>&gt;</span><span></span><span>&lt;<span class="start-tag">p</span>&gt;</span><span>
+<span id="line519"></span>						</span><span>&lt;<span class="start-tag">input</span> <span class="attribute-name">type</span>="<a class="attribute-value">submit</a>" <span class="attribute-name">value</span>="<a class="attribute-value">Upload!</a>" <span class="attribute-name">id</span>="<a class="attribute-value">upload-button</a>"&gt;</span><span>
+<span id="line520"></span>					</span><span>&lt;<span class="start-tag">fieldset</span> <span class="attribute-name">id</span>="<a class="attribute-value">progress</a>" <span class="attribute-name">style</span>="<a class="attribute-value">display: none</a>"&gt;</span><span>
+<span id="line521"></span>						</span><span>&lt;<span class="start-tag">legend</span>&gt;</span><span>Files Progress</span><span>&lt;/<span class="end-tag">legend</span>&gt;</span><span>
+<span id="line522"></span>						</span><span>&lt;<span class="start-tag">div</span> <span class="attribute-name">class</span>="<a class="attribute-value">progress-trough</a>"&gt;</span><span>
+<span id="line523"></span>								</span><span>&lt;<span class="start-tag">div</span> <span class="attribute-name">id</span>="<a class="attribute-value">progress-bar</a>" <span class="attribute-name">class</span>="<a class="attribute-value">progress-bar</a>"&gt;</span><span>0%</span><span>&lt;/<span class="end-tag">div</span>&gt;</span><span>
+<span id="line524"></span>						</span><span>&lt;/<span class="end-tag">div</span>&gt;</span><span>
+<span id="line525"></span>    			</span><span>&lt;/<span class="end-tag">fieldset</span>&gt;</span><span></span><span>&lt;<span class="start-tag">p</span>&gt;</span><span>							
+<span id="line526"></span>					</span><span>&lt;/<span class="end-tag">form</span>&gt;</span><span>
+<span id="line527"></span>					</span><span>&lt;/<span class="end-tag">div</span>&gt;</span><span> 
+<span id="line528"></span>
+<span id="line529"></span>					</span><span>&lt;<span class="start-tag">hr</span>&gt;</span><span>
+<span id="line530"></span>					
+<span id="line531"></span>					</span><span>&lt;<span class="start-tag">a</span> <span class="attribute-name">id</span>=<a class="attribute-value">create_dir_button_div</a> <span class="attribute-name">href</span>=<a class="attribute-value" href="view-source:http://localhost:8000/#Create">#Create</a> &gt;</span><span>Create Directory</span><span>&lt;/<span class="end-tag">a</span>&gt;</span><span> 
+<span id="line532"></span>
+<span id="line533"></span>					</span><span>&lt;<span class="start-tag">div</span> <span class="attribute-name">id</span>="<a class="attribute-value">create_dir_div</a>" <span class="attribute-name">style</span>="<a class="attribute-value">display: none;</a>" &gt;</span><span>
+<span id="line534"></span>						</span><span>&lt;<span class="start-tag">form</span>&gt;</span><span>
+<span id="line535"></span>						</span><span>&lt;<span class="start-tag">br</span>&gt;</span><span>
+<span id="line536"></span>						</span><span>&lt;<span class="start-tag">input</span> <span class="attribute-name">type</span>=<a class="attribute-value">text</a> <span class="attribute-name">id</span>=<a class="attribute-value">new_dir_name</a> <span class="attribute-name">placeholder</span>="<a class="attribute-value">Directory Name Here</a>" <span class="attribute-name">required</span>&gt;</span><span>
+<span id="line537"></span>						</span><span>&lt;<span class="start-tag">input</span> <span class="attribute-name">type</span>=<a class="attribute-value">text</a> <span class="attribute-name">id</span>=<a class="attribute-value">dirs_permission</a> <span class="attribute-name">maxlength</span>="<a class="attribute-value">4</a>"  <span class="attribute-name">placeholder</span>="<a class="attribute-value">Permissions Name Here</a>"&gt;</span><span>
+<span id="line538"></span>						</span><span>&lt;<span class="start-tag">br</span>&gt;</span><span>
+<span id="line539"></span>						</span><span>&lt;<span class="start-tag">br</span>&gt;</span><span>
+<span id="line540"></span>						</span><span>&lt;<span class="start-tag">input</span> <span class="attribute-name">type</span>="<a class="attribute-value">submit</a>" <span class="attribute-name">value</span>="<a class="attribute-value">Create!</a>" <span class="attribute-name">id</span>="<a class="attribute-value">create_dir_button</a>"&gt;</span><span>				
+<span id="line541"></span>						</span><span>&lt;/<span class="end-tag">form</span>&gt;</span><span>
+<span id="line542"></span>					</span><span>&lt;/<span class="end-tag">div</span>&gt;</span><span> 
+<span id="line543"></span>					
+<span id="line544"></span>					</span><span>&lt;<span class="start-tag">hr</span>&gt;</span><span>
+<span id="line545"></span>					
+<span id="line546"></span>					</span><span>&lt;<span class="start-tag">a</span> <span class="attribute-name">id</span>=<a class="attribute-value">delete_dir_button</a> <span class="attribute-name">href</span>=<a class="attribute-value" href="view-source:http://localhost:8000/#DELETE">#DELETE</a> &gt;</span><span>DELETE Directory</span><span>&lt;/<span class="end-tag">a</span>&gt;</span><span> 
+<span id="line547"></span>					
+<span id="line548"></span>					</span><span>&lt;<span class="start-tag">div</span> <span class="attribute-name">id</span>="<a class="attribute-value">delete_this_dir</a>" <span class="attribute-name">style</span>="<a class="attribute-value">display: none;</a>"&gt;</span><span>
+<span id="line549"></span>						</span><span>&lt;<span class="start-tag">br</span>&gt;</span><span>
+<span id="line550"></span>						</span><span>&lt;<span class="start-tag">br</span>&gt;</span><span>
+<span id="line551"></span>						</span><span>&lt;<span class="start-tag">input</span> <span class="attribute-name">type</span>="<a class="attribute-value">submit</a>" <span class="attribute-name">value</span>="<a class="attribute-value">Fuck it. kill dis dir!</a>"  <span class="attribute-name">onclick</span>="<a class="attribute-value">DeleteDirectory()</a>"&gt;</span><span>
+<span id="line552"></span>					</span><span>&lt;/<span class="end-tag">div</span>&gt;</span><span>
+<span id="line553"></span>
+<span id="line554"></span>					</span><span>&lt;<span class="start-tag">div</span> <span class="attribute-name">id</span>="<a class="attribute-value">delete_dir_div</a>" <span class="attribute-name">style</span>="<a class="attribute-value">display: none;</a>" &gt;</span><span>
+<span id="line555"></span>						</span><span>&lt;<span class="start-tag">br</span>&gt;</span><span>
+<span id="line556"></span>						</span><span>&lt;<span class="start-tag">form</span>&gt;</span><span>
+<span id="line557"></span>							</span><span>&lt;<span class="start-tag">div</span> <span class="attribute-name">class</span>="<a class="attribute-value">alert</a>" <span class="attribute-name">id</span>=<a class="attribute-value">alert_delete</a>&gt;</span><span>
+<span id="line558"></span>								</span><span>&lt;<span class="start-tag">span</span> <span class="attribute-name">class</span>="<a class="attribute-value">closebtn</a>" <span class="attribute-name">id</span>=<a class="attribute-value">close_button_del_dir</a>&gt;</span><span><span class="entity"><span>&amp;</span>times;</span></span><span>&lt;/<span class="end-tag">span</span>&gt;</span><span> 
+<span id="line559"></span>								</span><span>&lt;<span class="start-tag">strong</span>&gt;</span><span>Danger!</span><span>&lt;/<span class="end-tag">strong</span>&gt;</span><span> You are about to shove this directory's ass to the void!? you sure about this son?
+<span id="line560"></span>							</span><span>&lt;/<span class="end-tag">div</span>&gt;</span><span>
+<span id="line561"></span>						</span><span>&lt;/<span class="end-tag">form</span>&gt;</span><span>
+<span id="line562"></span>					</span><span>&lt;/<span class="end-tag">div</span>&gt;</span><span> 
+<span id="line563"></span>					
+<span id="line564"></span>						</span><span>&lt;<span class="start-tag">hr</span>&gt;</span><span>
+<span id="line565"></span>					
+<span id="line566"></span>						</span><span>&lt;<span class="start-tag">a</span> <span class="attribute-name">id</span>=<a class="attribute-value">download_queue_button</a> <span class="attribute-name">href</span>=<a class="attribute-value" href="view-source:http://localhost:8000/#DOWNLOAD">#DOWNLOAD</a> &gt;</span><span>Download all in queue</span><span>&lt;/<span class="end-tag">a</span>&gt;</span><span> 
+<span id="line567"></span>						</span><span>&lt;<span class="start-tag">div</span> <span class="attribute-name">id</span>=<a class="attribute-value">download_for_the_button</a> <span class="attribute-name">style</span>='<a class="attribute-value">display: none;</a>'&gt;</span><span>
+<span id="line568"></span>						</span><span>&lt;<span class="start-tag">br</span>&gt;</span><span>
+<span id="line569"></span>						</span><span>&lt;<span class="start-tag">a</span> <span class="attribute-name">href</span>=<a class="attribute-value" href="view-source:http://localhost:8000/#dl">#dl</a> <span class="attribute-name">onclick</span>="<a class="attribute-value">Download();</a>"&gt;</span><span>Get them all, all of 'em</span><span>&lt;/<span class="end-tag">a</span>&gt;</span><span>
+<span id="line570"></span>						</span><span>&lt;<span class="start-tag">br</span>&gt;</span><span>
+<span id="line571"></span>						</span><span>&lt;<span class="start-tag">br</span>&gt;</span><span>
+<span id="line572"></span>						</span><span>&lt;<span class="start-tag">a</span> <span class="attribute-name">href</span>=<a class="attribute-value" href="view-source:http://localhost:8000/#check">#check</a> <span class="attribute-name">onclick</span>="<a class="attribute-value">Check();</a>"&gt;</span><span>View files (for vids and music)</span><span>&lt;/<span class="end-tag">a</span>&gt;</span><span>
+<span id="line573"></span>						</span><span>&lt;/<span class="end-tag">div</span>&gt;</span><span>
+<span id="line574"></span>					
+<span id="line575"></span>					</span><span>&lt;<span class="start-tag">hr</span>&gt;</span><span>
+<span id="line576"></span>					
+<span id="line577"></span>					
+<span id="line578"></span>						</span><span>&lt;<span class="start-tag">a</span> <span class="attribute-name">id</span>=<a class="attribute-value">delete_queue_button</a> <span class="attribute-name">href</span>=<a class="attribute-value" href="view-source:http://localhost:8000/#DELETE_QUEUE">#DELETE_QUEUE</a> &gt;</span><span>DELETE ALL IN QUEUE</span><span>&lt;/<span class="end-tag">a</span>&gt;</span><span> 
+<span id="line579"></span>						</span><span>&lt;<span class="start-tag">div</span> <span class="attribute-name">id</span>=<a class="attribute-value">delete_for_the_button</a> <span class="attribute-name">style</span>='<a class="attribute-value">display: none;</a>'&gt;</span><span> </span><span>&lt;/<span class="end-tag">div</span>&gt;</span><span>
+<span id="line580"></span>						
+<span id="line581"></span>						</span><span>&lt;<span class="start-tag">br</span>&gt;</span><span>
+<span id="line582"></span>						</span><span>&lt;<span class="start-tag">a</span> <span class="attribute-name">href</span>=<a class="attribute-value" href="view-source:http://localhost:8000/#delqueue">#delqueue</a> <span class="attribute-name">onclick</span>="<a class="attribute-value">DeleteQueue();</a>"&gt;</span><span>Delete All In queue</span><span>&lt;/<span class="end-tag">a</span>&gt;</span><span>
+<span id="line583"></span>					
+<span id="line584"></span>					</span><span>&lt;<span class="start-tag">hr</span>&gt;</span><span>
+<span id="line585"></span>
+<span id="line586"></span>			</span><span>&lt;/<span class="end-tag">div</span>&gt;</span><span> 
+<span id="line587"></span>			
+<span id="line588"></span>		 			</span><span>&lt;<span class="start-tag">form</span>&gt;</span><span>
+<span id="line589"></span>      </span><span>&lt;<span class="start-tag">div</span>  <span class="attribute-name">id</span>=<a class="attribute-value">buttons</a>&gt;</span><span>
+<span id="line590"></span>				</span><span>&lt;<span class="start-tag">br</span>&gt;</span><span>
+<span id="line591"></span>				</span><span>&lt;<span class="start-tag">a</span> <span class="attribute-name">href</span>=<a class="attribute-value" href="view-source:http://localhost:8000/#backk">#backk</a> <span class="attribute-name">id</span>=<a class="attribute-value">process_input</a>&gt;</span><span></span><span>&lt;<span class="start-tag">button</span> <span class="attribute-name">class</span>='<a class="attribute-value">btn btn-default</a>'&gt;</span><span>Back</span><span>&lt;/<span class="end-tag">button</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">a</span>&gt;</span><span>
+<span id="line592"></span>			</span><span>&lt;/<span class="end-tag">div</span>&gt;</span><span>
+<span id="line593"></span>			</span><span>&lt;/<span class="end-tag">form</span>&gt;</span><span>
+<span id="line594"></span>     
+<span id="line595"></span>
+<span id="line596"></span>		</span><span>&lt;<span class="start-tag">h4</span>&gt;</span><span> Directories: </span><span>&lt;/<span class="end-tag">h4</span>&gt;</span><span>
+<span id="line597"></span>			</span><span>&lt;<span class="start-tag">div</span> <span class="attribute-name">id</span>=<a class="attribute-value">directories</a>&gt;</span><span>
+<span id="line598"></span>
+<span id="line599"></span>      </span><span>&lt;/<span class="end-tag">div</span>&gt;</span><span>
+<span id="line600"></span>      </span><span>&lt;<span class="start-tag">br</span>&gt;</span><span>
+<span id="line601"></span>
+<span id="line602"></span>			
+<span id="line603"></span>      	</span><span>&lt;<span class="start-tag">a</span> <span class="attribute-name">id</span>=<a class="attribute-value">hide_files</a> <span class="attribute-name">href</span>=<a class="attribute-value" href="view-source:http://localhost:8000/#files">#files</a>&gt;</span><span></span><span>&lt;<span class="start-tag">h4</span>&gt;</span><span> Files: </span><span>&lt;/<span class="end-tag">h4</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">a</span>&gt;</span><span>
+<span id="line604"></span>      </span><span>&lt;<span class="start-tag">div</span> <span class="attribute-name">id</span>=<a class="attribute-value">files</a>&gt;</span><span>
+<span id="line605"></span>		</span><span>&lt;/<span class="end-tag">div</span>&gt;</span><span>
+<span id="line606"></span>
+<span id="line607"></span>			</span><span>&lt;<span class="start-tag">a</span> <span class="attribute-name">href</span>=<a class="attribute-value" href="view-source:http://localhost:8000/#clean">#clean</a> <span class="attribute-name">onclick</span>="<a class="attribute-value">ArrayClear();</a>"&gt;</span><span></span><span>&lt;<span class="start-tag">h4</span>&gt;</span><span>Clear Queue </span><span>&lt;/<span class="end-tag">h4</span>&gt;</span><span></span><span>&lt;/<span class="end-tag">a</span>&gt;</span><span>
+<span id="line608"></span>			</span><span>&lt;<span class="start-tag">ul</span> <span class="attribute-name">id</span>=<a class="attribute-value">files_on_queue</a>&gt;</span><span>
+<span id="line609"></span>
+<span id="line610"></span>
+<span id="line611"></span>		
+<span id="line612"></span>		</span><span class="error" title="End tag “div” seen, but there were open elements.">&lt;/<span class="end-tag">div</span>&gt;</span><span>
+<span id="line613"></span>	
+<span id="line614"></span>		</span><span>&lt;<span class="start-tag">hr</span>&gt;</span><span>
+<span id="line615"></span></span><span>&lt;<span class="start-tag">script</span> <span class="attribute-name">type</span>="<a class="attribute-value">text/javascript</a>" <span class="attribute-name">src</span>="<a class="attribute-value" href="view-source:http://localhost:8000/static/js/uploadr.js">/static/js/uploadr.js</a>"&gt;</span><span></span><span>&lt;/<span class="end-tag">script</span>&gt;</span><span>
+<span id="line616"></span>
+<span id="line617"></span></span><span>&lt;<span class="start-tag">script</span> <span class="attribute-name">href</span>="<a class="attribute-value" href="view-source:http://localhost:8000/static/js/bootstrap.js">/static/js/bootstrap.js</a>"&gt;</span><span></span><span>&lt;/<span class="end-tag">script</span>&gt;</span><span>
+<span id="line618"></span>  </span><span>&lt;/<span class="end-tag">body</span>&gt;</span><span>
+<span id="line619"></span></span><span>&lt;/<span class="end-tag">html</span>&gt;</span><span></span></pre><menu type="context" id="actions"><menuitem id="goToLine" label="Go to Line…" accesskey="L"></menuitem><menuitem id="wrapLongLines" label="Wrap Long Lines" type="checkbox" checked="true"></menuitem><menuitem id="highlightSyntax" label="Syntax Highlighting" type="checkbox" checked="true"></menuitem></menu></body></html>
