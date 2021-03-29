@@ -97,7 +97,7 @@ pycups==1.9.73
 pycurl==7.43.0
 pydbus==0.6.0
 pygeocoder==1.2.5
-Pygments==2.2.0
+Pygments==2.7.4
 pygobject==3.24.1
 PyInstaller==3.2.1
 pylint==1.7.2
